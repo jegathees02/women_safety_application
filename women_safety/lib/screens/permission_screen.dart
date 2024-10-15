@@ -12,20 +12,53 @@ class _PermissionsPageState extends State<PermissionsPage> {
   bool _locationPermissionGranted = false;
   bool _termsAccepted = false;
 
-  // Function to request permissions
-  Future<void> _requestPermission(Permission permission, Function onGranted) async {
-    final status = await permission.request();
-    if (status == PermissionStatus.granted) {
-      onGranted();
+  @override
+  void initState() {
+    super.initState();
+    _checkAndRequestPermissions();
+  }
+
+  // Function to check and request all required permissions
+  Future<void> _checkAndRequestPermissions() async {
+    await _checkPermission(Permission.camera, (isGranted) {
+      setState(() {
+        _cameraPermissionGranted = isGranted;
+      });
+    });
+
+    await _checkPermission(Permission.microphone, (isGranted) {
+      setState(() {
+        _microphonePermissionGranted = isGranted;
+      });
+    });
+
+    await _checkPermission(Permission.location, (isGranted) {
+      setState(() {
+        _locationPermissionGranted = isGranted;
+      });
+    });
+  }
+
+  // Function to check a single permission and request if not granted
+  Future<void> _checkPermission(Permission permission, Function(bool) onResult) async {
+    final status = await permission.status;
+    if (status.isGranted) {
+      onResult(true);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Permission not granted!')),
-      );
+      final newStatus = await permission.request();
+      onResult(newStatus.isGranted);
+      if (!newStatus.isGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Permission not granted!')),
+        );
+      }
     }
   }
 
-  // Handle permissions
+  // Function to handle "Accept All and Proceed" button click
   Future<void> _handlePermissions() async {
+    await _checkAndRequestPermissions();
+
     if (_cameraPermissionGranted &&
         _microphonePermissionGranted &&
         _locationPermissionGranted &&
@@ -34,7 +67,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All permissions granted!')),
       );
-      // Navigate to the main screen or proceed
+      // Proceed with navigation or other actions
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please grant all permissions and accept the terms')),
@@ -82,86 +115,89 @@ class _PermissionsPageState extends State<PermissionsPage> {
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),
-            
-            // Camera permission radio button
+
+            // Camera permission toggle switch
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Radio<bool>(
-                  value: true,
-                  groupValue: _cameraPermissionGranted,
-                  onChanged: (value) async {
-                    await _requestPermission(Permission.camera, () {
-                      setState(() {
-                        _cameraPermissionGranted = true;
-                      });
-                    });
-                  },
-                ),
                 const Text('Camera Permission'),
-              ],
-            ),
-            
-            // Microphone permission radio button
-            Row(
-              children: <Widget>[
-                Radio<bool>(
-                  value: true,
-                  groupValue: _microphonePermissionGranted,
+                Switch(
+                  value: _cameraPermissionGranted,
                   onChanged: (value) async {
-                    await _requestPermission(Permission.microphone, () {
+                    await _checkPermission(Permission.camera, (isGranted) {
                       setState(() {
-                        _microphonePermissionGranted = true;
+                        _cameraPermissionGranted = isGranted;
                       });
                     });
                   },
                 ),
+              ],
+            ),
+
+            // Microphone permission toggle switch
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
                 const Text('Microphone Permission'),
-              ],
-            ),
-            
-            // Location permission radio button
-            Row(
-              children: <Widget>[
-                Radio<bool>(
-                  value: true,
-                  groupValue: _locationPermissionGranted,
+                Switch(
+                  value: _microphonePermissionGranted,
                   onChanged: (value) async {
-                    await _requestPermission(Permission.location, () {
+                    await _checkPermission(Permission.microphone, (isGranted) {
                       setState(() {
-                        _locationPermissionGranted = true;
+                        _microphonePermissionGranted = isGranted;
                       });
                     });
                   },
                 ),
+              ],
+            ),
+
+            // Location permission toggle switch
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
                 const Text('Location Permission'),
+                Switch(
+                  value: _locationPermissionGranted,
+                  onChanged: (value) async {
+                    await _checkPermission(Permission.location, (isGranted) {
+                      setState(() {
+                        _locationPermissionGranted = isGranted;
+                      });
+                    });
+                  },
+                ),
               ],
             ),
 
             const SizedBox(height: 20),
-            
-            // Terms & Conditions link and radio button
+
+            // Terms & Conditions section
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Radio<bool>(
-                  value: true,
-                  groupValue: _termsAccepted,
-                  onChanged: (value) {
-                    _showTermsAndConditions();
-                  },
-                ),
                 const Text('Accept Terms and Conditions'),
-                TextButton(
-                  onPressed: _showTermsAndConditions,
-                  child: const Text(
-                    'Read Terms & Conditions',
-                    style: TextStyle(decoration: TextDecoration.underline),
-                  ),
+                Switch(
+                  value: _termsAccepted,
+                  onChanged: (value) {
+                    if (value) _showTermsAndConditions();
+                  },
                 ),
               ],
             ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: _showTermsAndConditions,
+                child: const Text(
+                  'Read Terms & Conditions',
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
+              ),
+            ),
 
             const Spacer(),
-            
+
             // Accept All Button
             Center(
               child: ElevatedButton(

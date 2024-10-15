@@ -5,8 +5,14 @@
 import FlutterMacOS
 import Foundation
 
+import device_info_plus
+import flutter_local_notifications
+import flutter_volume_controller
 import realm
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+  DeviceInfoPlusMacosPlugin.register(with: registry.registrar(forPlugin: "DeviceInfoPlusMacosPlugin"))
+  FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))
+  FlutterVolumeControllerPlugin.register(with: registry.registrar(forPlugin: "FlutterVolumeControllerPlugin"))
   RealmPlugin.register(with: registry.registrar(forPlugin: "RealmPlugin"))
 }

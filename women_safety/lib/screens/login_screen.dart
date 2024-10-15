@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-// import '../services/auth_service.dart'; // Importing the authentication service
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // For jsonEncode and jsonDecode
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,20 +17,41 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.text;
     final password = _passwordController.text;
 
-    // jegathees5555
-    // bool success = await AuthService.login(email, password);
-    bool success = true;
+    // Make a POST request to the Node.js backend
+    final response = await http.post(
+      Uri.parse('http://104.197.9.162:3000/login'), // Replace with your server URL
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+      }),
+    );
 
-    if (success) {
-      // Login successful, navigate to another screen
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login successful')),
-      );
-      // You can navigate to home or dashboard screen
+    if (response.statusCode == 200) {
+      // Assuming the response contains a token or some identifier for successful login
+      // You might want to handle the response body as per your API's response structure
+      final responseBody = json.decode(response.body);
+      if (responseBody['success'] == true) {
+        // Navigate to the On/Off page if login is successful
+        Navigator.pushNamed(context, '/onoff');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login successful')),
+        );
+      } else {
+        // Handle invalid login (response body could include a message)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid email or password')),
+        );
+      }
     } else {
+      // Handle server errors or connectivity issues
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login failed')),
+        const SnackBar(content: Text('Login failed. Please try again. ')),
       );
+      print(json.decode(response.body));
+      print('Email: $email, Password: $password');
     }
   }
 
