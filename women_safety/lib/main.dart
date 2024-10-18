@@ -5,6 +5,7 @@ import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/permission_screen.dart';
 import 'screens/on_off_page.dart';
+import 'screens/settings_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure bindings are initialized
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignupScreen(), // Route to Signup
         '/login': (context) => const LoginScreen(), // Route to Login
         '/onoff': (context) => OnOffPage(),
+        '/settings': (context) => SettingsPage(),
       },
     );
   }
