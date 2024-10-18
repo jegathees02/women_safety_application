@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:vibration/vibration.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import '../widgets/top_menu_bar.dart';
+// import '../widgets/flash_light_widget.dart'; // Import the FlashlightWidget
 import '../widgets/button_listener.dart';
 
 class OnOffPage extends StatefulWidget {
@@ -14,6 +15,7 @@ class _OnOffPageState extends State<OnOffPage> {
   bool _isAppOn = false;
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final ButtonListener _buttonListener = ButtonListener();
+   // State to manage flashlight blinking
 
   @override
   void initState() {
@@ -119,9 +121,7 @@ class _OnOffPageState extends State<OnOffPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('On/Off Switch'),
-      ),
+      appBar: TopMenuBar(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

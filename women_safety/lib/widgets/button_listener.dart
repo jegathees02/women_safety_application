@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 // import 'package:flutter_volume_controller/flutter_volume_button.dart';
 import 'package:vibration/vibration.dart';
+// import 'flash_light_widget.dart';
 
 class ButtonListener {
   Timer? _timer;
   bool _isListening = false;
   bool _isVolumeUpPressed = false;
+  bool _isBlinking = false;
 
   // Start listening for volume button presses
   void startListening() {
     if (_isListening) return; // Prevent multiple listeners
 
     _isListening = true;
+    _isBlinking = true;
 
     // Listening for volume button presses
     FlutterVolumeController.addListener((volume) {
@@ -36,6 +39,7 @@ class ButtonListener {
         // Check if the device has a vibrator and vibrate
         // if (await Vibration.hasVibrator()) {
           Vibration.vibrate(duration: 1000); // Vibrate for 1 second
+          // FlashlightWidget(isBlinking: _isBlinking); // Blink the flashlight
         // }
       }
     });
@@ -51,5 +55,6 @@ class ButtonListener {
   void stopListening() {
     _resetTimer();
     _isListening = false;
+    _isBlinking = false;
   }
 }

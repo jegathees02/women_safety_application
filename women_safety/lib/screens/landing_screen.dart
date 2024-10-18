@@ -10,24 +10,24 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopMenuBar(isLoggedIn: isLoggedIn),
+      appBar: TopMenuBar(),
       body: ListView(
         children: [
           _buildSection(
             context,
-            'https://via.placeholder.com/400', // Dummy image link
+            'https://www.google.com/url?sa=i&url=https%3A%2F%2Ftemplates.joomla-monster.com%2Fjoomla30%2Fjm-news-portal%2Fen%2Fclassifieds-ads%2Fmake-offer%2Fprofile%2Fdemo-user%2C115&psig=AOvVaw00MDqqOuQ0jWZBHCclaTGA&ust=1729097436478000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCMjhrq3skIkDFQAAAAAdAAAAABAE', // Dummy image link
             'Welcome to WS App. This application is designed for women\'s safety.',
             true,
           ),
           _buildSection(
             context,
-            'https://via.placeholder.com/400', // Another dummy image link
+            'https://www.google.com/url?sa=i&url=https%3A%2F%2Ftemplates.joomla-monster.com%2Fjoomla30%2Fjm-news-portal%2Fen%2Fclassifieds-ads%2Fmake-offer%2Fprofile%2Fdemo-user%2C115&psig=AOvVaw00MDqqOuQ0jWZBHCclaTGA&ust=1729097436478000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCMjhrq3skIkDFQAAAAAdAAAAABAE', // Another dummy image link
             'Stay connected and safe with emergency alerts and other features.',
             false,
           ),
           _buildSection(
             context,
-            'https://via.placeholder.com/400', // Replace with real image later
+            'https://www.google.com/url?sa=i&url=https%3A%2F%2Ftemplates.joomla-monster.com%2Fjoomla30%2Fjm-news-portal%2Fen%2Fclassifieds-ads%2Fmake-offer%2Fprofile%2Fdemo-user%2C115&psig=AOvVaw00MDqqOuQ0jWZBHCclaTGA&ust=1729097436478000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCMjhrq3skIkDFQAAAAAdAAAAABAE', // Replace with real image later
             'Get help quickly with automated alert features when you need it the most.',
             true,
           ),

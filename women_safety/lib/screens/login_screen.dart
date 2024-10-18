@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For jsonEncode and jsonDecode
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,17 +31,23 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
-      // Assuming the response contains a token or some identifier for successful login
-      // You might want to handle the response body as per your API's response structure
       final responseBody = json.decode(response.body);
-      if (responseBody['success'] == true) {
+
+      // Check if the message indicates a successful login
+      if (responseBody['message'] == "Login successful" && responseBody['token'] != null) {
+        // Save the login status, token, and email to shared preferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('token', responseBody['token']);
+        await prefs.setString('email', email);
+
         // Navigate to the On/Off page if login is successful
         Navigator.pushNamed(context, '/onoff');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login successful')),
         );
       } else {
-        // Handle invalid login (response body could include a message)
+        // Handle invalid login
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Invalid email or password')),
         );
@@ -48,10 +55,8 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       // Handle server errors or connectivity issues
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login failed. Please try again. ')),
+        const SnackBar(content: Text('Login failed. Please try again.')),
       );
-      print(json.decode(response.body));
-      print('Email: $email, Password: $password');
     }
   }
 

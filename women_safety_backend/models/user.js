@@ -5,6 +5,7 @@ const Joi = require('joi'); // For input validation
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // Load environment variables
 
+
 // Define the User schema
 const userSchema = new mongoose.Schema({
     name: {
