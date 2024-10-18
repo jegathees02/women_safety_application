@@ -20,10 +20,10 @@ class RecorderService {
 
   RecorderService() {
     // Load environment variables
-    _bucketId =  'women-safety-application';
-    _accessKey =  'AKIAXYKJQONL2FPDSPU7';
-    _secretKey =  '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';
-    _region =  'us-east-1';
+    _bucketId =  'women-safety-application1';
+    _accessKey =  'AKIAXYKJQONL2FPDSPU71';
+    _secretKey =  'p9lS+sYX9UEyptX9nTXKsR1wI+/uMD6tsvfIjyTe1';
+    _region =  'us-east-11';
   }
 
   // Initialize both audio and camera
