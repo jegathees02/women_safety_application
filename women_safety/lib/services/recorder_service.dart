@@ -1,20 +1,35 @@
-// recorder_service.dart
 import 'dart:async';
 import 'dart:io';
+import 'package:aws_s3_upload/aws_s3_upload.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv
 
 class RecorderService {
   final FlutterSoundRecorder _audioRecorder = FlutterSoundRecorder();
   late CameraController _cameraController;
   bool _isRecording = false;
+  
+
+  // AWS S3 configuration loaded from .env
+  late final String _bucketId;
+  late final String _accessKey;
+  late final String _secretKey;
+  late final String _region;
+
+  RecorderService() {
+    // Load environment variables
+    _bucketId =  'women-safety-application';
+    _accessKey =  'AKIAXYKJQONL2FPDSPU7';
+    _secretKey =  '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';
+    _region =  'us-east-1';
+  }
 
   // Initialize both audio and camera
   Future<void> initializeRecorder() async {
     // Initialize the audio recorder
-    await _audioRecorder.openAudioSession();
+    await _audioRecorder.openRecorder();
 
     // Initialize the camera
     final cameras = await availableCameras();
@@ -27,14 +42,14 @@ class RecorderService {
   }
 
   // Start recording both audio and video
-  Future<void> startRecording() async {
-    if (_isRecording) return;
+  Future<List<String>> startRecording() async {
+    if (_isRecording) return [];
 
     _isRecording = true;
     // Get the temporary directory for storing the files
-    final tempDir = await getTemporaryDirectory();
-    final audioPath = '${tempDir.path}/audio_recording.aac';
-    final videoPath = '${tempDir.path}/video_recording.mp4';
+    // final tempDir = await getTemporaryDirectory();
+    const audioPath = 'audio_recording.aac';
+    const videoPath = 'video_recording.mp4';
 
     // Start audio recording
     await _audioRecorder.startRecorder(
@@ -43,48 +58,54 @@ class RecorderService {
     );
 
     // Start video recording
-    await _cameraController.startVideoRecording(videoPath);
+    await _cameraController.startVideoRecording(); // Removed videoPath argument here
 
-    // Stop recording after 10 seconds and upload the files
-    Timer(const Duration(seconds: 10), () async {
-      await stopRecording(audioPath, videoPath);
-      _isRecording = false;
-    });
+    // Return paths for later use
+    return [audioPath, videoPath];
   }
 
-  // Stop recording and upload to AWS S3
-  Future<void> stopRecording(String audioPath, String videoPath) async {
+  // Stop recording and return file paths
+  Future<List<String>> stopRecording() async {
     // Stop audio recording
-    await _audioRecorder.stopRecorder();
-
+    final audioPath = await _audioRecorder.stopRecorder();
     // Stop video recording
-    await _cameraController.stopVideoRecording();
+    final videoPath = await _cameraController.stopVideoRecording().then((value) => value.path);
 
-    // Upload to AWS S3
-    await uploadToAWS(audioPath, 'audio_recording.aac');
-    await uploadToAWS(videoPath, 'video_recording.mp4');
+    _isRecording = false;
+
+    // Return the file paths
+    return [audioPath!, videoPath]; // Assuming audioPath is non-null
   }
 
   // Upload file to AWS S3
   Future<void> uploadToAWS(String filePath, String fileName) async {
-    final bucket = Bucket(
-      region: 'your-region',
-      bucketName: 'your-bucket-name',
-      accessKey: 'your-access-key',
-      secretKey: 'your-secret-key',
-    );
-
     final file = File(filePath);
-    await bucket.uploadFile(
-      fileName,
-      file,
-      'video/mp4', // or 'audio/aac' for audio files
-    );
+    dotenv.load(fileName: ".env");
+    if (await file.exists()) {
+      // Upload the file to S3
+      final result = await AwsS3.uploadFile(
+        accessKey: _accessKey,
+        secretKey: _secretKey,
+        file: file,
+        bucket: _bucketId,
+        region: _region,
+        metadata: {"test": "test"}, // optional
+      );
+
+      // Optionally return a success message or URI
+      if (result != null) {
+        print('$fileName uploaded successfully to $result');
+      } else {
+        print('Failed to upload $fileName.');
+      }
+    } else {
+      throw Exception('File $filePath does not exist');
+    }
   }
 
   // Dispose resources
   void dispose() {
-    _audioRecorder.closeAudioSession();
-    _cameraController.dispose();
+    _audioRecorder.closeRecorder(); // Ensure the audio recorder is closed
+    _cameraController.dispose(); // Dispose of the camera controller
   }
 }

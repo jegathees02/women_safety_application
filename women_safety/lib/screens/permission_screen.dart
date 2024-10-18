@@ -10,6 +10,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
   bool _cameraPermissionGranted = false;
   bool _microphonePermissionGranted = false;
   bool _locationPermissionGranted = false;
+  bool _storagePermissionGranted = false; // New storage permission variable
   bool _termsAccepted = false;
 
   @override
@@ -37,6 +38,12 @@ class _PermissionsPageState extends State<PermissionsPage> {
         _locationPermissionGranted = isGranted;
       });
     });
+
+    await _checkPermission(Permission.storage, (isGranted) { // Check storage permission
+      setState(() {
+        _storagePermissionGranted = isGranted;
+      });
+    });
   }
 
   // Function to check a single permission and request if not granted
@@ -62,6 +69,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
     if (_cameraPermissionGranted &&
         _microphonePermissionGranted &&
         _locationPermissionGranted &&
+        _storagePermissionGranted && // Check storage permission
         _termsAccepted) {
       // All permissions granted and terms accepted
       ScaffoldMessenger.of(context).showSnackBar(
@@ -124,6 +132,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                 Switch(
                   value: _cameraPermissionGranted,
                   onChanged: (value) async {
+                    if (!value) return; // If switching off, do nothing
                     await _checkPermission(Permission.camera, (isGranted) {
                       setState(() {
                         _cameraPermissionGranted = isGranted;
@@ -142,6 +151,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                 Switch(
                   value: _microphonePermissionGranted,
                   onChanged: (value) async {
+                    if (!value) return; // If switching off, do nothing
                     await _checkPermission(Permission.microphone, (isGranted) {
                       setState(() {
                         _microphonePermissionGranted = isGranted;
@@ -160,9 +170,29 @@ class _PermissionsPageState extends State<PermissionsPage> {
                 Switch(
                   value: _locationPermissionGranted,
                   onChanged: (value) async {
+                    if (!value) return; // If switching off, do nothing
                     await _checkPermission(Permission.location, (isGranted) {
                       setState(() {
                         _locationPermissionGranted = isGranted;
+                      });
+                    });
+                  },
+                ),
+              ],
+            ),
+
+            // Storage permission toggle switch
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                const Text('Storage Permission'),
+                Switch(
+                  value: _storagePermissionGranted,
+                  onChanged: (value) async {
+                    if (!value) return; // If switching off, do nothing
+                    await _checkPermission(Permission.storage, (isGranted) {
+                      setState(() {
+                        _storagePermissionGranted = isGranted;
                       });
                     });
                   },

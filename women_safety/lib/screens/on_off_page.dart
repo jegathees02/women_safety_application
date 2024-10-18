@@ -22,7 +22,7 @@ class _OnOffPageState extends State<OnOffPage> {
     super.initState();
     _initializeNotifications();
     _createNotificationChannel(); // Create the notification channel
-    _buttonListener.startListening();
+    // _buttonListener.startListening();
   }
 
   // Initialize notifications
