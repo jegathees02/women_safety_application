@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:convert'; // For jsonEncode and jsonDecode
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
@@ -40,9 +41,23 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setBool('isLoggedIn', true);
         await prefs.setString('token', responseBody['token']);
         await prefs.setString('email', email);
+        await prefs.setString('id', responseBody['id']);
+
+        // Check if permissions are granted
+        bool isPermissionGranted = await _checkAllPermissions();
+
+        // Save the permission status in shared preferences
+        await prefs.setBool('is_permission_given', isPermissionGranted);
+
+        // Redirect based on permission status
+        if (isPermissionGranted) {
+          Navigator.pushNamed(context, '/onoff');
+        } else {
+          Navigator.pushNamed(context, '/permission');
+        }
 
         // Navigate to the On/Off page if login is successful
-        Navigator.pushNamed(context, '/onoff');
+        // Navigator.pushNamed(context, '/onoff');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login successful')),
         );
@@ -59,6 +74,26 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
   }
+
+  // Function to check all required permissions
+Future<bool> _checkAllPermissions() async {
+  // List of permissions to check
+  final List<Permission> permissions = [
+    Permission.camera,
+    Permission.microphone,
+    Permission.location,
+    // Permission.vibration,
+    Permission.storage,
+  ];
+
+  // Check each permission and return true if all are granted
+  for (var permission in permissions) {
+    if (!(await permission.isGranted)) {
+      return false;
+    }
+  }
+  return true;
+}
 
   @override
   Widget build(BuildContext context) {

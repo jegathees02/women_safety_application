@@ -26,6 +26,24 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 5,
         maxlength: 1024
+    },
+    phone: {
+        type: [String], // Array of strings to hold multiple phone numbers
+        validate: {
+            validator: function(v) {
+                return v.every(num => /^[0-9]{10}$/.test(num)); // Validate phone number format
+            },
+            message: 'Each phone number should be a 10-digit number.'
+        }
+    },
+    control_room: {
+        type: [String], // Array of strings for control room contact numbers
+        validate: {
+            validator: function(v) {
+                return v.every(num => /^[0-9]{10}$/.test(num)); // Validate control room number format
+            },
+            message: 'Each control room number should be a 10-digit number.'
+        }
     }
 });
 

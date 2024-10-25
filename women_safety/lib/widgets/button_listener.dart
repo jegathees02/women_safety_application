@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:vibration/vibration.dart';
+import 'package:women_safety/services/send_alert.dart';
 import '../services/recorder_service.dart'; // Import the RecorderService
 
 class ButtonListener {
@@ -21,15 +22,19 @@ class ButtonListener {
     _isListening = true;
     _isBlinking = true;
 
-    
-
+    bool isFirst = true;
     // Listening for volume button presses
     FlutterVolumeController.addListener((volume) {
-      if (volume > 0.5) {
+      if(isFirst) {
+        isFirst = false;
+        FlutterVolumeController.setVolume(0.5);
+      }
+      if (volume >= 1.0) {
         _isVolumeUpPressed = true;
         _startTimer(); // Start timer immediately when volume up is pressed
       } else if (volume <= 0.5) {
         _isVolumeUpPressed = false;
+        FlutterVolumeController.setVolume(0.5);
         _resetTimer(); // Reset timer if volume up is released
       }
     });
@@ -43,7 +48,8 @@ class ButtonListener {
         // Check if the device has a vibrator and vibrate
         // if (await Vibration.hasVibrator()) {
           Vibration.vibrate(duration: 1000); // Vibrate for 1 second
-
+          // Send an alert to the backend
+          SendAlert();
           // Initialize the recorder service
           await _recorderService.initializeRecorder();
           // Start recording audio and video

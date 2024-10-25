@@ -27,7 +27,7 @@ async function login(req, res) {
         });
 
         // Send the token in the Authorization header
-        res.header('Authorization', `Bearer ${token}`).send({ message: 'Login successful', token });
+        res.header('Authorization', `Bearer ${token}`).send({ message: 'Login successful', token, id:user._id });
     } catch (error) {
         res.status(500).send('Internal Server Error.');
     }

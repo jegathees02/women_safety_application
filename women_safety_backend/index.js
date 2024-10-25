@@ -2,7 +2,7 @@ const http = require('http');
 const express = require('express');
 require('dotenv').config(); // Load environment variables
 
-const {loginController, signupController} = require('./controllers/controller.js');
+const {loginController, signupController, alertController} = require('./controllers/controller.js');
 const connectDB = require('./config/db.js');
 
 const app = express();
@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 
 app.post('/login', loginController);
 app.post('/signup', signupController);
+app.post('/alert', alertController);
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');

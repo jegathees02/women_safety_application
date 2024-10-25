@@ -39,11 +39,11 @@ class _PermissionsPageState extends State<PermissionsPage> {
       });
     });
 
-    await _checkPermission(Permission.storage, (isGranted) { // Check storage permission
-      setState(() {
-        _storagePermissionGranted = isGranted;
-      });
-    });
+    // await _checkPermission(Permission.storage, (isGranted) { // Check storage permission
+    //   setState(() {
+    //     _storagePermissionGranted = isGranted;
+    //   });
+    // });
   }
 
   // Function to check a single permission and request if not granted
@@ -69,12 +69,13 @@ class _PermissionsPageState extends State<PermissionsPage> {
     if (_cameraPermissionGranted &&
         _microphonePermissionGranted &&
         _locationPermissionGranted &&
-        _storagePermissionGranted && // Check storage permission
+        // _storagePermissionGranted && // Check storage permission
         _termsAccepted) {
       // All permissions granted and terms accepted
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All permissions granted!')),
       );
+      Navigator.pushNamed(context, '/onoff');
       // Proceed with navigation or other actions
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -182,23 +183,23 @@ class _PermissionsPageState extends State<PermissionsPage> {
             ),
 
             // Storage permission toggle switch
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const Text('Storage Permission'),
-                Switch(
-                  value: _storagePermissionGranted,
-                  onChanged: (value) async {
-                    if (!value) return; // If switching off, do nothing
-                    await _checkPermission(Permission.storage, (isGranted) {
-                      setState(() {
-                        _storagePermissionGranted = isGranted;
-                      });
-                    });
-                  },
-                ),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: <Widget>[
+            //     const Text('Storage Permission'),
+            //     Switch(
+            //       value: _storagePermissionGranted,
+            //       onChanged: (value) async {
+            //         if (!value) return; // If switching off, do nothing
+            //         await _checkPermission(Permission.storage, (isGranted) {
+            //           setState(() {
+            //             _storagePermissionGranted = isGranted;
+            //           });
+            //         });
+            //       },
+            //     ),
+            //   ],
+            // ),
 
             const SizedBox(height: 20),
 

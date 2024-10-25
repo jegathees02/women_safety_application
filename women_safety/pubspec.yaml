@@ -54,6 +54,8 @@ dependencies:
   http: ^0.13.3
   flutter_aws_s3_client: ^0.6.0
   aws_s3_upload: ^1.5.0
+  volume_key_board: ^0.0.1
+  # flutter_android_volume_keydown: ^1.0.0
   # aws_s3_upload: ^1.1.2  
   # torch_controller: ^2.0.1
   # torch_light: ^0.3.0
