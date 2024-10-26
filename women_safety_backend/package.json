@@ -4,7 +4,7 @@
   "description": "women safety application",
   "main": "index.js",
   "scripts": {
-    "start":"nodemon index.js",
+    "start": "nodemon index.js",
     "devStart": "nodemon index.js",
     "test": "none"
   },
@@ -14,8 +14,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^22.8.1",
     "bcrypt": "^5.1.1",
+    "bluebird": "^3.7.2",
+    "clicksend": "^5.0.79",
     "config": "^3.3.12",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "http": "^0.0.1-security",
@@ -23,6 +27,12 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^8.7.1",
-    "nodemon": "^3.1.7"
+    "nodemailer": "^6.9.15",
+    "nodemon": "^3.1.7",
+    "request": "^2.88.2",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
   }
 }

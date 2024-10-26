@@ -1,11 +1,13 @@
 const http = require('http');
 const express = require('express');
+const cors = require('cors');
 require('dotenv').config(); // Load environment variables
 
 const {loginController, signupController, alertController} = require('./controllers/controller.js');
 const connectDB = require('./config/db.js');
 
 const app = express();
+app.use(cors());
 
 // Connect to the database
 connectDB();
